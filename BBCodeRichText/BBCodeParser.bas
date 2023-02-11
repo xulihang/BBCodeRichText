@@ -24,7 +24,6 @@ Public Sub Parse(str As String) As List
 	For index=0 To str.Length-1
 		If CurrentChar(str,index)="[" Then
 			Dim tagContent As String = TextUntil("]",str,index)
-			Log(tagContent)
 			Dim codeName As String = GetBBCodeName(tagContent)
 			If codeName <> "" And tagContent.Contains("/") = False Then
 				Dim text As String = plainText.ToString
@@ -32,9 +31,11 @@ Public Sub Parse(str As String) As List
 					runs.Add(CreateRun(text,"",""))
 				End If
 				plainText.Initialize
-				Dim runText As String = TextUntil("[/"&codeName&"]",str,index)
-				runs.Add(CreateRun(runText,codeName,tagContent))
+				Dim endTag As String = "[/"&codeName&"]"
+				Dim runText As String = TextUntil(endTag,str,index)
 				index = index + runText.Length - 1
+				runText = CodePairStripped(runText,tagContent,endTag)
+				runs.Add(CreateRun(runText,codeName,tagContent))
 			End If
 		Else
 			plainText.Append(CurrentChar(str,index))
@@ -45,6 +46,13 @@ Public Sub Parse(str As String) As List
 		runs.Add(CreateRun(text,"",""))
 	End If
 	Return runs
+End Sub
+
+'[b]Hello [i]world[/i][/b] -> Hello [i]world[/i]
+Private Sub CodePairStripped(runText As String,tagContent As String,endTag As String) As String
+	runText = runText.Replace(tagContent,"")
+	runText= runText.Replace(endTag,"")
+	Return runText
 End Sub
 
 'text:[color=#ff00ff]Red[/color],codeName:color,tagContent:[color=#ff00ff]

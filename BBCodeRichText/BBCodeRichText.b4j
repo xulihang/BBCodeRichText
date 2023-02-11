@@ -5,14 +5,16 @@ FileGroup1=Default Group
 Group=Default Group
 Library1=b4xcollections
 Library2=javaobject
-Library3=jcore
-Library4=jfx
-Library5=jxui
-Library6=jbitmapcreator
+Library3=jbitmapcreator
+Library4=jcore
+Library5=jfx
+Library6=jxui
+Library7=cssutils
 Module1=BBCodeParser
+Module2=TextFlow
 NumberOfFiles=1
-NumberOfLibraries=6
-NumberOfModules=1
+NumberOfLibraries=7
+NumberOfModules=2
 Version=8.9
 @EndOfDesignText@
 #Region Project Attributes 
@@ -37,6 +39,24 @@ Sub Button1_Click
 	xui.MsgboxAsync("Hello World!", "B4X")
 	Dim parser As BBCodeParser
 	parser.Initialize
-	Dim runs As List = parser.Parse($"[b]Hello [i][color=#ff00ff]world[/color][/i][/b]! [color=#ff00ff]Red[/color]."$)
+	Dim runs As List = parser.Parse($"[b]Hello [i][color=#ffff00]world[/color][/i][/b]! [color=#ff0000]Red[/color]."$)
 	Log(runs)
+	Dim tf As TextFlow
+	tf.Initialize
+	For Each run As TextRun In runs
+		tf.AddText(run.text)
+		If run.color <> "" Then
+			Dim r,g,b As Int
+			r=Regex.Split(",",run.color)(0)
+			g=Regex.Split(",",run.color)(1)
+			b=Regex.Split(",",run.color)(2)
+			tf.SetColor(fx.Colors.RGB(r,g,b))
+		End If
+		Dim f As Font = fx.CreateFont("Times New Roman",16,run.bold,run.italic)
+		tf.SetFont(f)
+	Next
+	For Each name As String In fx.GetAllFontFamilies
+		Log(name)
+	Next
+	MainForm.RootPane.AddNode(tf.CreateTextFlow,0,0,200,200)
 End Sub

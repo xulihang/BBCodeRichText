@@ -17,6 +17,15 @@ End Sub
 
 '[b]Hello [i]world[/i][/b]! [color=#ff00ff]Red[/color] -> [Hello ,world,! ,Red]
 Public Sub Parse(str As String) As List
+	Dim run As TextRun
+	run.Initialize
+	run.text = str
+	Return ParseRun(run)
+End Sub
+
+
+Private Sub ParseRun(run As TextRun) As List
+	Dim str As String = run.text
 	Dim runs As List
 	runs.Initialize
 	Dim plainText As StringBuilder
@@ -28,14 +37,14 @@ Public Sub Parse(str As String) As List
 			If codeName <> "" And tagContent.Contains("/") = False Then
 				Dim text As String = plainText.ToString
 				If text <> "" Then
-					runs.Add(CreateRun(text,"",""))
+					runs.Add(CreateRun(text,run,"",""))
 				End If
 				plainText.Initialize
 				Dim endTag As String = "[/"&codeName&"]"
 				Dim runText As String = TextUntil(endTag,str,index)
 				index = index + runText.Length - 1
 				runText = CodePairStripped(runText,tagContent,endTag)
-				runs.Add(CreateRun(runText,codeName,tagContent))
+				runs.Add(CreateRun(runText,run,codeName,tagContent))
 			End If
 		Else
 			plainText.Append(CurrentChar(str,index))
@@ -43,7 +52,7 @@ Public Sub Parse(str As String) As List
 	Next
 	Dim text As String = plainText.ToString
 	If text <> "" Then
-		runs.Add(CreateRun(text,"",""))
+		runs.Add(CreateRun(text,run,"",""))
 	End If
 	Return runs
 End Sub
@@ -56,10 +65,17 @@ Private Sub CodePairStripped(runText As String,tagContent As String,endTag As St
 End Sub
 
 'text:[color=#ff00ff]Red[/color],codeName:color,tagContent:[color=#ff00ff]
-private Sub CreateRun(text As String,codeName As String,tagContent As String) As TextRun
+private Sub CreateRun(text As String,parentRun As TextRun,codeName As String,tagContent As String) As TextRun
 	Dim run As TextRun
 	run.Initialize
 	run.text = text
+	
+	If parentRun.IsInitialized Then
+		run.bold = parentRun.bold
+		run.color = parentRun.color
+		run.italic = parentRun.italic
+	End If
+	
 	If codeName = "b" Then
 		run.bold = True
 	else if codeName = "i" Then

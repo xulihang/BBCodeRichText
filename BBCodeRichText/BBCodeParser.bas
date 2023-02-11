@@ -23,7 +23,6 @@ Public Sub Parse(str As String) As List
 	Return ParseRun(run)
 End Sub
 
-
 Private Sub ParseRun(run As TextRun) As List
 	Dim str As String = run.text
 	Dim runs As List
@@ -44,7 +43,11 @@ Private Sub ParseRun(run As TextRun) As List
 				Dim runText As String = TextUntil(endTag,str,index)
 				index = index + runText.Length - 1
 				runText = CodePairStripped(runText,tagContent,endTag)
-				runs.Add(CreateRun(runText,run,codeName,tagContent))
+				Dim richRun As TextRun = CreateRun(runText,run,codeName,tagContent)
+				Dim innerRuns As List
+				innerRuns.Initialize
+				parseInnerRuns(richRun,innerRuns)
+				runs.AddAll(innerRuns)
 			End If
 		Else
 			plainText.Append(CurrentChar(str,index))
@@ -56,6 +59,18 @@ Private Sub ParseRun(run As TextRun) As List
 	End If
 	Return runs
 End Sub
+
+Private Sub parseInnerRuns(run As TextRun,runs As List)
+	Dim parsedRuns As List  = ParseRun(run)
+	If parsedRuns.Size = 1 Then ' no tags
+		runs.Add(parsedRuns.Get(0))
+	Else
+		For Each innerRun As TextRun In parsedRuns
+			parseInnerRuns(innerRun,runs)
+		Next
+	End If
+End Sub
+
 
 '[b]Hello [i]world[/i][/b] -> Hello [i]world[/i]
 Private Sub CodePairStripped(runText As String,tagContent As String,endTag As String) As String

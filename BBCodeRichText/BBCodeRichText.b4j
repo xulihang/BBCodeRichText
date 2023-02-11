@@ -37,6 +37,6 @@ Sub Button1_Click
 	xui.MsgboxAsync("Hello World!", "B4X")
 	Dim parser As BBCodeParser
 	parser.Initialize
-	Dim runs As List = parser.Parse($"[b]Hello [i]world[/i][/b]! [color=#ff00ff]Red[/color]."$)
+	Dim runs As List = parser.Parse($"[b]Hello [i][color=#ff00ff]world[/color][/i][/b]! [color=#ff00ff]Red[/color]."$)
 	Log(runs)
 End Sub

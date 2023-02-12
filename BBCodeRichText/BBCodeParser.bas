@@ -27,9 +27,12 @@ Public Sub Parse(str As String) As List
 End Sub
 
 Private Sub ParseRun(run As TextRun) As List
-	Dim str As String = run.text
 	Dim runs As List
 	runs.Initialize
+	If run.text = "" Then
+		Return runs
+	End If
+	Dim str As String = run.text
 	Dim plainText As StringBuilder
 	plainText.Initialize
 	For index=0 To str.Length-1
@@ -44,13 +47,15 @@ Private Sub ParseRun(run As TextRun) As List
 				plainText.Initialize
 				Dim endTag As String = "[/"&codeName&"]"
 				Dim runText As String = TextUntil(endTag,str,index)
-				index = index + runText.Length - 1
-				runText = CodePairStripped(runText,tagContent,endTag)
-				Dim richRun As TextRun = CreateRun(runText,run,codeName,tagContent)
-				Dim innerRuns As List
-				innerRuns.Initialize
-				parseInnerRuns(richRun,innerRuns)
-				runs.AddAll(innerRuns)
+				If runText<>"" Then
+				    index = index + runText.Length - 1
+				    runText = CodePairStripped(runText,tagContent,endTag)				
+					Dim richRun As TextRun = CreateRun(runText,run,codeName,tagContent)
+					Dim innerRuns As List
+					innerRuns.Initialize
+					parseInnerRuns(richRun,innerRuns)
+					runs.AddAll(innerRuns)
+				End If
 			End If
 		Else
 			plainText.Append(CurrentChar(str,index))

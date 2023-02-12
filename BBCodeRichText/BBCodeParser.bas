@@ -148,7 +148,7 @@ private Sub validBBCode(str As String) As Boolean
 	Return False
 End Sub
 
-Sub GetBBCodeName(str As String) As String
+private Sub GetBBCodeName(str As String) As String
 	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
 	If matcher.Find Then
 		Dim match As String = matcher.Group(1)
@@ -162,7 +162,7 @@ Sub GetBBCodeName(str As String) As String
 	Return ""
 End Sub
 
-Sub TextUntil(EndStr As String,str As String,index As Int) As String
+private Sub TextUntil(EndStr As String,str As String,index As Int) As String
 	Dim sb As StringBuilder
 	sb.Initialize
 	Dim textLeft As String=str.SubString2(index,str.Length)
@@ -180,35 +180,6 @@ Sub TextUntil(EndStr As String,str As String,index As Int) As String
 	Return sb.ToString
 End Sub
 
-Sub CurrentChar(str As String,index As Int) As String
+private Sub CurrentChar(str As String,index As Int) As String
 	Return str.CharAt(index)
 End Sub
-
-
-Sub PreviousChar(str As String,index As Int) As String
-	Try
-		If index>0 Then
-			Return str.CharAt(index-1)
-		Else
-			Return ""
-		End If
-	Catch
-		Log(LastException)
-	End Try
-	Return ""
-End Sub
-
-Sub NextChar(str As String,index As Int) As String
-	Try
-		If index <= str.Length-2 Then
-			Return str.CharAt(index + 1)
-		Else
-			Return ""
-		End If
-	Catch
-		Log(LastException)
-	End Try
-	Return ""
-End Sub
-
-

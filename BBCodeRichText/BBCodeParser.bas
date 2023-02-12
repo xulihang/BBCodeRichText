@@ -7,7 +7,7 @@ Version=7.51
 Sub Class_Globals
 	Type TextRun(text As String,bold As Boolean,italic As Boolean,color As String)
 	Type Tag(name As String,kind As Int,index As Int)
-	Private supportedBBCode As List = Array As String("b","color","i")
+	Private supportedBBCodes As List = Array As String("b","color","i")
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -119,7 +119,7 @@ Sub GetBBCodeName(str As String) As String
 		If match.Contains("=") Then
 			match = match.SubString2(0,match.IndexOf("="))
 		End If
-		If supportedBBCode.IndexOf(match) <> -1 Then
+		If supportedBBCodes.IndexOf(match) <> -1 Then
 			Return match
 		End If
 	End If

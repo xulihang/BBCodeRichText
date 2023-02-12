@@ -19,7 +19,11 @@ Public Sub Parse(str As String) As List
 	Dim run As TextRun
 	run.Initialize
 	run.text = str
-	Return ParseRun(run)
+	If validBBCode(str) Then
+		Return ParseRun(run)
+	Else
+		Return Array(run)
+	End If
 End Sub
 
 Private Sub ParseRun(run As TextRun) As List
@@ -110,6 +114,19 @@ private Sub ParseColor(tagContent As String) As String
 	Return r&","&g&","&b
 End Sub
 
+
+private Sub validBBCode(str As String) As Boolean
+	Dim count As Int = 0
+	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
+	Do While matcher.Find
+		count = count + 1
+	Loop
+	If count Mod 2 = 0 Then
+		Return True
+	Else
+		Return False
+	End If
+End Sub
 
 Sub GetBBCodeName(str As String) As String
 	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)

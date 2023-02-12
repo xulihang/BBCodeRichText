@@ -111,12 +111,17 @@ End Sub
 
 'parse [color=#ff0000] and return the rgb value 255,0,0
 private Sub ParseColor(tagContent As String) As String
-	Dim hex As String
-	hex = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1)
-	Dim r As Int = Bit.ParseInt(hex.SubString2(1,3), 16)
-	Dim g As Int = Bit.ParseInt(hex.SubString2(3,5), 16)
-	Dim b As Int = Bit.ParseInt(hex.SubString2(5,7), 16)
-	Return r&","&g&","&b
+	Try
+		Dim hex As String
+		hex = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1)
+		Dim r As Int = Bit.ParseInt(hex.SubString2(1,3), 16)
+		Dim g As Int = Bit.ParseInt(hex.SubString2(3,5), 16)
+		Dim b As Int = Bit.ParseInt(hex.SubString2(5,7), 16)
+		Return r&","&g&","&b
+	Catch
+		Log(LastException)
+	End Try
+	Return ""
 End Sub
 
 

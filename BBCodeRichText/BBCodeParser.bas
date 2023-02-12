@@ -119,13 +119,23 @@ private Sub validBBCode(str As String) As Boolean
 	Dim count As Int = 0
 	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
 	Do While matcher.Find
-		count = count + 1
+		Dim match As String = matcher.Group(1)
+		If match.Contains("=") Then
+			match = match.SubString2(0,match.IndexOf("="))
+		End If
+		If match.Contains("[") Or match.Contains("]") Then
+			Return False
+		End If
+		If supportedBBCodes.IndexOf(match) <> -1 Then
+			count = count + 1
+		End If
 	Loop
-	If count Mod 2 = 0 Then
-		Return True
-	Else
-		Return False
-	End If
+	If count > 0 Then
+		If count Mod 2 = 0 Then
+			Return True
+		End If
+	End If	
+	Return False
 End Sub
 
 Sub GetBBCodeName(str As String) As String

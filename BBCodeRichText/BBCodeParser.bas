@@ -6,7 +6,6 @@ Version=7.51
 @EndOfDesignText@
 Sub Class_Globals
 	Type TextRun(text As String,bold As Boolean,italic As Boolean,color As String)
-	Type Tag(name As String,kind As Int,index As Int)
 	Private supportedBBCodes As List = Array As String("b","color","i")
 End Sub
 

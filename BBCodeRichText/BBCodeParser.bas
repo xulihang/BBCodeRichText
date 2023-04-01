@@ -5,8 +5,8 @@ Type=Class
 Version=7.51
 @EndOfDesignText@
 Sub Class_Globals
-	Type TextRun(text As String,bold As Boolean,italic As Boolean,fauxBold As Boolean,fauxItalic As Boolean,color As String)
-	Private supportedBBCodes As List = Array As String("b","color","i","fi","fb")
+	Type TextRun(text As String,fontname As String,fontsize As Double,bold As Boolean,italic As Boolean,fauxBold As Boolean,fauxItalic As Boolean,color As String)
+	Private supportedBBCodes As List = Array As String("b","color","i","fi","fb","fontname","fontsize")
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -99,6 +99,8 @@ private Sub CreateRun(text As String,parentRun As TextRun,codeName As String,tag
 		run.italic = parentRun.italic
 		run.fauxBold = parentRun.fauxBold
 		run.fauxItalic = parentRun.fauxItalic
+		run.fontname = parentRun.fontname
+		run.fontsize = parentRun.fontsize
 	End If
 	
 	If codeName = "b" Then
@@ -111,8 +113,36 @@ private Sub CreateRun(text As String,parentRun As TextRun,codeName As String,tag
 		run.fauxItalic = True
 	else if codeName = "color" Then
 		run.color = ParseColor(tagContent)
+	else if codeName = "fontname" Then
+		run.fontname = ParseFontName(tagContent)
+	else if codeName = "fontsize" Then
+		run.fontsize = ParseFontSize(tagContent)
 	End If
 	Return run
+End Sub
+
+'parse [fontname=Tahoma] and return Tahoma
+private Sub ParseFontName(tagContent As String) As String
+	Try
+		Dim name As String
+		name = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1)
+		Return name
+	Catch
+		Log(LastException)
+	End Try
+	Return ""
+End Sub
+
+'parse [fontsize=11.0] and return 11.0
+private Sub ParseFontSize(tagContent As String) As Double
+	Try
+		Dim size As Double
+		size = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1)
+		Return size
+	Catch
+		Log(LastException)
+	End Try
+	Return 16
 End Sub
 
 'parse [color=#ff0000] and return the rgb value 255,0,0

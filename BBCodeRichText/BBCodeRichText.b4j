@@ -41,7 +41,7 @@ Sub Button1_Click
 	parser.Initialize
 	Dim text As String = $"[b]Hello [/i][i][color=#ffff00]world[/color][/b]! [color=#ff0000]Red[/color]."$
 	text = "的[color=#ff0000]确[/color]的。"
-	text = "普通[fb]粗体[/fb][fi]斜体[/fi]"
+	text = "[fontname=Tahoma][fontsize=26]普通[/fontsize][/fontname][fb]粗体[/fb][fi]斜体[/fi]"
 	Dim runs As List = parser.Parse(text)
 	Log(runs)
 	Dim tf As TextFlow
@@ -55,7 +55,19 @@ Sub Button1_Click
 			b=Regex.Split(",",run.color)(2)
 			tf.SetColor(fx.Colors.RGB(r,g,b))
 		End If
-		Dim f As Font = fx.CreateFont("Times New Roman",16,run.bold,run.italic)
+		Dim fontname As String
+		If run.fontname <> "" Then
+			fontname = run.fontname
+		Else
+			fontname = "Tahoma"
+		End If
+		Dim fontsize As Double
+		If run.fontsize <> 0 Then
+			fontsize = run.fontsize
+		Else
+			fontsize = 26
+		End If
+		Dim f As Font = fx.CreateFont(fontname,fontsize,run.bold,run.italic)
 		tf.SetFont(f)
 		If run.fauxBold Then
 			tf.SetFauxBold(fx.Colors.Black)

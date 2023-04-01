@@ -107,6 +107,42 @@ Public Sub SetStrikethrough(Strikethrough As Boolean) As TextFlow
 	Return Me
 End Sub
 
+Public Sub SetFauxItalic As TextFlow
+	Dim item As JavaObject = lastItem
+	Dim n As Node = item
+	Dim TR As JavaObject
+	TR.InitializeNewInstance("javafx.scene.effect.PerspectiveTransform",Null)
+	Dim width As Double = n.PrefWidth
+	Dim height As Double = n.PrefHeight
+	Dim Bounds As B4XRect = GetLayoutBounds(item)
+	width = Bounds.Width
+	height = Bounds.Height
+	TR.Runmethod("setUlx",Array(2.0))
+	TR.Runmethod("setUly",Array(0.0))
+	TR.Runmethod("setUrx",Array(width + 2))
+	TR.Runmethod("setUry",Array(0.0))
+	TR.Runmethod("setLrx",Array(width))
+	TR.Runmethod("setLry",Array(height))
+	TR.Runmethod("setLlx",Array(0.0))
+	TR.Runmethod("setLly",Array(height))
+	item.RunMethod("setEffect", Array(TR))
+	Return Me
+End Sub
+
+Public Sub SetFauxBold(color As Paint) As TextFlow
+	Dim item As JavaObject = lastItem
+	item.RunMethod("setStroke",Array(color))
+	item.RunMethod("setStrokeWidth",Array(0.5))
+	Return Me
+End Sub
+
+Public Sub GetLayoutBounds(TextClass As JavaObject) As B4XRect
+	Dim Bounds As JavaObject = TextClass.RunMethod("getLayoutBounds",Null)
+	Dim R As B4XRect
+	R.Initialize(Bounds.RunMethod("getMinX",Null),Bounds.RunMethod("getMinY",Null),Bounds.RunMethod("getMaxX",Null),Bounds.RunMethod("getMaxY",Null))
+	Return R
+End Sub
+
 Public Sub Reset As TextFlow
 	texts.Initialize
 	Return Me

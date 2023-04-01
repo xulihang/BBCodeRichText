@@ -5,8 +5,8 @@ Type=Class
 Version=7.51
 @EndOfDesignText@
 Sub Class_Globals
-	Type TextRun(text As String,bold As Boolean,italic As Boolean,color As String)
-	Private supportedBBCodes As List = Array As String("b","color","i")
+	Type TextRun(text As String,bold As Boolean,italic As Boolean,fauxBold As Boolean,fauxItalic As Boolean,color As String)
+	Private supportedBBCodes As List = Array As String("b","color","i","fi","fb")
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -97,12 +97,18 @@ private Sub CreateRun(text As String,parentRun As TextRun,codeName As String,tag
 		run.bold = parentRun.bold
 		run.color = parentRun.color
 		run.italic = parentRun.italic
+		run.fauxBold = parentRun.fauxBold
+		run.fauxItalic = parentRun.fauxItalic
 	End If
 	
 	If codeName = "b" Then
 		run.bold = True
 	else if codeName = "i" Then
 		run.italic = True
+	else if codeName = "fb" Then
+		run.fauxBold = True
+	else if codeName = "fi" Then
+		run.fauxItalic = True
 	else if codeName = "color" Then
 		run.color = ParseColor(tagContent)
 	End If

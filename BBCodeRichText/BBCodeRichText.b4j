@@ -41,6 +41,7 @@ Sub Button1_Click
 	parser.Initialize
 	Dim text As String = $"[b]Hello [/i][i][color=#ffff00]world[/color][/b]! [color=#ff0000]Red[/color]."$
 	text = "的[color=#ff0000]确[/color]的。"
+	text = "普通[fb]粗体[/fb][fi]斜体[/fi]"
 	Dim runs As List = parser.Parse(text)
 	Log(runs)
 	Dim tf As TextFlow
@@ -56,6 +57,12 @@ Sub Button1_Click
 		End If
 		Dim f As Font = fx.CreateFont("Times New Roman",16,run.bold,run.italic)
 		tf.SetFont(f)
+		If run.fauxBold Then
+			tf.SetFauxBold(fx.Colors.Black)
+		End If
+		If run.fauxItalic Then
+			tf.SetFauxItalic
+		End If
 	Next
 	For Each name As String In fx.GetAllFontFamilies
 		Log(name)

@@ -48,8 +48,8 @@ Private Sub ParseRun(run As TextRun) As List
 				Dim endTag As String = "[/"&codeName&"]"
 				Dim runText As String = TextUntil(endTag,str,index)
 				If runText<>"" Then
-				    index = index + runText.Length - 1
-				    runText = CodePairStripped(runText,tagContent,endTag)				
+					index = index + runText.Length - 1
+					runText = CodePairStripped(runText,tagContent,endTag)
 					Dim richRun As TextRun = CreateRun(runText,run,codeName,tagContent)
 					Dim innerRuns As List
 					innerRuns.Initialize
@@ -103,6 +103,8 @@ private Sub CreateRun(text As String,parentRun As TextRun,codeName As String,tag
 		run.fontsize = parentRun.fontsize
 	End If
 	
+	codeName = codeName.ToLowerCase
+
 	If codeName = "b" Then
 		run.bold = True
 	else if codeName = "i" Then
@@ -149,7 +151,7 @@ End Sub
 private Sub ParseColor(tagContent As String) As String
 	Try
 		Dim hex As String
-		hex = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1)
+		hex = tagContent.SubString2(tagContent.IndexOf("=")+1,tagContent.Length-1).ToLowerCase
 		Dim r As Int = Bit.ParseInt(hex.SubString2(1,3), 16)
 		Dim g As Int = Bit.ParseInt(hex.SubString2(3,5), 16)
 		Dim b As Int = Bit.ParseInt(hex.SubString2(5,7), 16)
@@ -161,29 +163,6 @@ private Sub ParseColor(tagContent As String) As String
 End Sub
 
 
-private Sub validBBCode(str As String) As Boolean
-	Dim count As Int = 0
-	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
-	Do While matcher.Find
-		Dim match As String = matcher.Group(1)
-		If match.Contains("=") Then
-			match = match.SubString2(0,match.IndexOf("="))
-		End If
-		If match.Contains("[") Or match.Contains("]") Then
-			Return False
-		End If
-		If supportedBBCodes.IndexOf(match) <> -1 Then
-			count = count + 1
-		End If
-	Loop
-	If count > 0 Then
-		If count Mod 2 = 0 Then
-			Return True
-		End If
-	End If	
-	Return False
-End Sub
-
 private Sub GetBBCodeName(str As String) As String
 	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
 	If matcher.Find Then
@@ -191,7 +170,7 @@ private Sub GetBBCodeName(str As String) As String
 		If match.Contains("=") Then
 			match = match.SubString2(0,match.IndexOf("="))
 		End If
-		If supportedBBCodes.IndexOf(match) <> -1 Then
+		If supportedBBCodes.IndexOf(match.ToLowerCase) <> -1 Then
 			Return match
 		End If
 	End If
@@ -218,4 +197,27 @@ End Sub
 
 private Sub CurrentChar(str As String,index As Int) As String
 	Return str.CharAt(index)
+End Sub
+
+private Sub validBBCode(str As String) As Boolean
+	Dim count As Int = 0
+	Dim matcher As Matcher = Regex.Matcher("\[/?(.*?)]",str)
+	Do While matcher.Find
+		Dim match As String = matcher.Group(1)
+		If match.Contains("=") Then
+			match = match.SubString2(0,match.IndexOf("="))
+		End If
+		If match.Contains("[") Or match.Contains("]") Then
+			Return False
+		End If
+		If supportedBBCodes.IndexOf(match.ToLowerCase) <> -1 Then
+			count = count + 1
+		End If
+	Loop
+	If count > 0 Then
+		If count Mod 2 = 0 Then
+			Return True
+		End If
+	End If
+	Return False
 End Sub
